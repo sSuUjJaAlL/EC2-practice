@@ -1,19 +1,47 @@
-# patching
-sudo apt update && sudo apt update -y
+#!/bin/bash
 
-# install npm and node
+set -e
 
-sudo apt-get install npm -y
+echo "Updating system packages..."
+sudo apt update -y
+sudo apt upgrade -y
 
+echo "Installing npm..."
+sudo apt install npm -y
 
-sudo npm i -g n 
-
+echo "Installing Node.js LTS..."
+sudo npm install -g n
 sudo n lts
 
-# install nginx
-sudo apt-get install nginx -y
+echo "Verifying Node and npm versions..."
+node -v
+npm -v
 
+echo "Installing NGINX..."
+sudo apt install nginx -y
+
+echo "Starting and enabling NGINX..."
 sudo systemctl start nginx
 sudo systemctl enable nginx
 
-sudo systemctl status nginx
+echo "Checking NGINX status..."
+sudo systemctl status nginx --no-pager
+
+echo "Configuring NGINX for Express app..."
+if [ -f /etc/nginx/sites-available/express-app ]; then
+    sudo ln -sf /etc/nginx/sites-available/express-app /etc/nginx/sites-enabled/
+else
+    echo "WARNING: /etc/nginx/sites-available/express-app not found"
+fi
+
+echo "Testing NGINX configuration..."
+sudo nginx -t
+
+echo "Restarting NGINX..."
+sudo systemctl restart nginx
+
+echo "Cleaning up..."
+sudo apt autoremove -y
+sudo apt autoclean
+
+echo "Setup completed successfully!"
