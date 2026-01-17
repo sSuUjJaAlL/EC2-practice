@@ -17,6 +17,13 @@ app.get("/health", (req: Request, res: Response) => {
   };
   return res.status(200).json(payload);
 });
+app.get("/random", (req: Request, res: Response) => {
+  const payload = {
+    message: "Working random",
+    time: new Date().toDateString(),
+  };
+  return res.status(200).json(payload);
+});
 
 app.listen(port, () => {
   console.log(`Server is Running on the Port : ${port}`);
